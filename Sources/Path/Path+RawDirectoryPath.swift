@@ -1,0 +1,8 @@
+extension Path {
+    internal static func directory(from rawDirectoryPath: String) -> Path<Absolute, Directory> {
+        return rawDirectoryPath
+            .components(separatedBy: "/")
+            .filter { !$0.isEmpty }
+            .reduce(File.root) { $0.joined(File.directory(DirectoryName(rawValue: $1))) }
+    }
+}

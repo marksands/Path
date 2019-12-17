@@ -36,14 +36,22 @@ final class PathTests: XCTestCase {
         try? data.write(to: (File.Util.temporary <%> File.file("fish2.txt")).fileURL)
         
         FileManager.default.files(in: File.Util.temporary).forEach { filePath in
-            print(filePath.render())
+            XCTAssertTrue(!filePath.fileURL.hasDirectoryPath)
         }
+
+        XCTAssertTrue(Array(FileManager.default.files(in: File.Util.temporary)).count >= 3)
+        
+        try? FileManager.default.removeFile(File.Util.temporary <%> File.file("fish.txt"))
+        try? FileManager.default.removeFile(File.Util.temporary <%> File.file("fish1.txt"))
+        try? FileManager.default.removeFile(File.Util.temporary <%> File.file("fish2.txt"))
     }
     
     func testDirectoryEnumeration() {
         FileManager.default.directories(in: File.Util.temporary).forEach { directoryPath in
-            print(directoryPath.render())
+            XCTAssertTrue(directoryPath.directoryURL.hasDirectoryPath)
         }
+        
+        XCTAssertTrue(!Array(FileManager.default.files(in: File.Util.temporary)).isEmpty)
     }
     
     static var allTests = [
