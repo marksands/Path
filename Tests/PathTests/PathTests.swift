@@ -3,55 +3,65 @@ import Path
 
 final class PathTests: XCTestCase {
     func testRendering() {
-        XCTAssertEqual(File.root.render(), "/")
-        XCTAssertEqual(File.current.render(), ".")
-        XCTAssertEqual((File.root <%> File.directory("var")).render(), "/var/")
-        XCTAssertEqual((File.root <%> File.file("tmp.txt")).render(), "/tmp.txt")
-        XCTAssertEqual((File.root <%> File.directory("var") <%> File.file("tmp.txt")).render(), "/var/tmp.txt")
+        XCTAssertEqual(Directory.root.render(), "/")
+        XCTAssertEqual(Directory.current.render(), ".")
+        XCTAssertEqual((Directory.root <%> Directory.directory("var")).render(), "/var/")
+        XCTAssertEqual((Directory.root <%> Directory.file("tmp.txt")).render(), "/tmp.txt")
+        XCTAssertEqual((Directory.root <%> Directory.directory("var") <%> Directory.file("tmp.txt")).render(), "/var/tmp.txt")
     }
     
     func testDirectoryURL() {
-        XCTAssertEqual(File.root.directoryURL, URL(fileURLWithPath: "/"))
-        XCTAssertEqual((File.root <%> File.directory("var")).directoryURL, URL(fileURLWithPath: "/var/"))
-        XCTAssertEqual((File.root <%> File.file("tmp.txt")).directoryURL, URL(fileURLWithPath: "/"))
-        XCTAssertEqual((File.root <%> File.directory("var") <%> File.file("tmp.txt")).directoryURL, URL(fileURLWithPath: "/var/"))
+        XCTAssertEqual(Directory.root.directoryURL, URL(fileURLWithPath: "/"))
+        XCTAssertEqual((Directory.root <%> Directory.directory("var")).directoryURL, URL(fileURLWithPath: "/var/"))
+        XCTAssertEqual((Directory.root <%> Directory.file("tmp.txt")).directoryURL, URL(fileURLWithPath: "/"))
+        XCTAssertEqual((Directory.root <%> Directory.directory("var") <%> Directory.file("tmp.txt")).directoryURL, URL(fileURLWithPath: "/var/"))
     }
     
     func testFileURL() {
-        XCTAssertEqual((File.root <%> File.file("tmp.txt")).fileURL, URL(fileURLWithPath: "/tmp.txt"))
-        XCTAssertEqual((File.root <%> File.directory("var") <%> File.file("tmp.txt")).fileURL, URL(fileURLWithPath: "/var/tmp.txt"))
+        XCTAssertEqual((Directory.root <%> Directory.file("tmp.txt")).fileURL, URL(fileURLWithPath: "/tmp.txt"))
+        XCTAssertEqual((Directory.root <%> Directory.directory("var") <%> Directory.file("tmp.txt")).fileURL, URL(fileURLWithPath: "/var/tmp.txt"))
     }
     
     func testFileUtil() {
-        XCTAssertTrue(File.Util.temporary.render().hasSuffix("/tmp/"))
-        XCTAssertTrue(File.Util.applicationSupport.render().hasSuffix("/Application Support/"))
-        XCTAssertTrue(File.Util.userCache.render().hasSuffix("/Library/Caches/"))
+        XCTAssertTrue(Directory.temporary.render().hasSuffix("/tmp/"))
+        XCTAssertTrue(Directory.User.applicationSupport.render().hasSuffix("/Application Support/"))
+        XCTAssertTrue(Directory.User.caches.render().hasSuffix("/Library/Caches/"))
     }
     
-    func testFileEnumeration() {
+    func testFileEnumeration() throws {
         let data = "hello, world".data(using: .utf8)!
         
-        try? data.write(to: (File.Util.temporary <%> File.file("fish.txt")).fileURL)
-        try? data.write(to: (File.Util.temporary <%> File.file("fish1.txt")).fileURL)
-        try? data.write(to: (File.Util.temporary <%> File.file("fish2.txt")).fileURL)
+        let f1 = Directory.temporary <%> Directory.file("fish.txt")
+        let f2 = Directory.temporary <%> Directory.file("fish1.txt")
+        let f3 = Directory.temporary <%> Directory.file("fish2.txt")
         
-        FileManager.default.files(in: File.Util.temporary).forEach { filePath in
+        try data.write(to: f1.fileURL)
+        try data.write(to: f2.fileURL)
+        try data.write(to: f3.fileURL)
+        
+        FileManager.default.files(in: Directory.temporary).forEach { filePath in
             XCTAssertTrue(!filePath.fileURL.hasDirectoryPath)
         }
 
-        XCTAssertTrue(Array(FileManager.default.files(in: File.Util.temporary)).count >= 3)
+        XCTAssertTrue(!Array(FileManager.default.files(in: Directory.temporary)).isEmpty)
         
-        try? FileManager.default.removeFile(File.Util.temporary <%> File.file("fish.txt"))
-        try? FileManager.default.removeFile(File.Util.temporary <%> File.file("fish1.txt"))
-        try? FileManager.default.removeFile(File.Util.temporary <%> File.file("fish2.txt"))
+        try FileManager.default.removeFile(f1)
+        try FileManager.default.removeFile(f2)
+        try FileManager.default.removeFile(f3)
     }
     
-    func testDirectoryEnumeration() {
-        FileManager.default.directories(in: File.Util.temporary).forEach { directoryPath in
+    func testDirectoryEnumeration() throws {
+        let p1 = Directory.temporary <%> Directory.directory("nested") <%> Directory.directory("directory")
+        
+        try FileManager.default.createPath(p1)
+        
+        FileManager.default.directories(in: Directory.temporary).forEach { directoryPath in
             XCTAssertTrue(directoryPath.directoryURL.hasDirectoryPath)
         }
         
-        XCTAssertTrue(!Array(FileManager.default.files(in: File.Util.temporary)).isEmpty)
+        XCTAssertTrue(!Array(FileManager.default.files(in: Directory.temporary)).isEmpty)
+        
+        try FileManager.default.removeDirectory(p1)
     }
     
     static var allTests = [

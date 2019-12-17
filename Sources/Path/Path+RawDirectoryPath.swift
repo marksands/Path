@@ -3,6 +3,6 @@ extension Path {
         return rawDirectoryPath
             .components(separatedBy: "/")
             .filter { !$0.isEmpty }
-            .reduce(File.root) { $0.joined(File.directory(DirectoryName(rawValue: $1))) }
+            .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
     }
 }

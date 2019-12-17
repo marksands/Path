@@ -1,8 +1,8 @@
 import Foundation
 
-extension File {
-    public enum Util {
-        public static var userCache: Path<Absolute, Directory> {
+extension Directory {
+    public enum User {
+        public static var caches: Path<Absolute, Directory> {
             guard let caches = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first else {
                 fatalError("Failed to locate cachesDirectory in userDomain!")
             }
@@ -10,7 +10,7 @@ extension File {
             return caches
                 .components(separatedBy: "/")
                 .filter { !$0.isEmpty }
-                .reduce(File.root) { $0.joined(File.directory(DirectoryName(rawValue: $1))) }
+                .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
         }
         
         public static var applicationSupport: Path<Absolute, Directory> {
@@ -21,14 +21,14 @@ extension File {
             return applicationSupport
                 .components(separatedBy: "/")
                 .filter { !$0.isEmpty }
-                .reduce(File.root) { $0.joined(File.directory(DirectoryName(rawValue: $1))) }
+                .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
         }
-        
-        public static var temporary: Path<Absolute, Directory> {
-            return NSTemporaryDirectory()
-                .components(separatedBy: "/")
-                .filter { !$0.isEmpty }
-                .reduce(File.root) { $0.joined(File.directory(DirectoryName(rawValue: $1))) }
-        }
+    }
+    
+    public static var temporary: Path<Absolute, Directory> {
+        return NSTemporaryDirectory()
+            .components(separatedBy: "/")
+            .filter { !$0.isEmpty }
+            .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
     }
 }

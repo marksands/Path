@@ -1,4 +1,4 @@
-extension File {
+extension Directory {
     public static let root = Path(InternalPath<Absolute, Directory>._root)
 
     public static let current = Path(InternalPath<Relative, Directory>._current)
