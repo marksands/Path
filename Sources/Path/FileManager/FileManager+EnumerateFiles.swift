@@ -5,17 +5,11 @@ extension FileManager {
         let enumerator = self.enumerator(at: path.directoryURL, includingPropertiesForKeys: [.fileSizeKey, .totalFileSizeKey])
         
         return AnySequence(sequence(state: enumerator) { enumerator -> Path<Absolute, File>? in
-            var fileURL = enumerator?.nextObject() as? URL
-            
-            while fileURL?.hasDirectoryPath ?? false {
-                fileURL = enumerator?.nextObject() as? URL
-            }
-            
-            if let fileURL = fileURL {
-                return Path<Absolute, File>.file(from: fileURL.path)
-            } else {
-                return nil
-            }
+            return enumerator?
+                .first(where: { !(($0 as? URL)?.hasDirectoryPath ?? false) })
+                .flatMap {
+                    ($0 as? URL).map { .file(from: $0.path) }
+                }
         })
     }
 }
