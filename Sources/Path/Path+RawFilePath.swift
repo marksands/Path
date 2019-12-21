@@ -9,7 +9,7 @@ extension Path {
         return pathComponents
             .dropLast()
             .filter { !$0.isEmpty }
-            .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
-            .joined(Directory.file(FileName(rawValue: lastChunk)))
+            .reduce(Directory.root) { $0.joined(Directory.directory($1)) }
+            .joined(Directory.file(lastChunk))
     }
 }

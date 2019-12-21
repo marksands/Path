@@ -10,7 +10,7 @@ extension Directory {
             return caches
                 .components(separatedBy: "/")
                 .filter { !$0.isEmpty }
-                .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
+                .reduce(Directory.root) { $0.joined(Directory.directory($1)) }
         }
         
         public static var applicationSupport: Path<Absolute, Directory> {
@@ -21,7 +21,7 @@ extension Directory {
             return applicationSupport
                 .components(separatedBy: "/")
                 .filter { !$0.isEmpty }
-                .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
+                .reduce(Directory.root) { $0.joined(Directory.directory($1)) }
         }
     }
     
@@ -29,6 +29,6 @@ extension Directory {
         return NSTemporaryDirectory()
             .components(separatedBy: "/")
             .filter { !$0.isEmpty }
-            .reduce(Directory.root) { $0.joined(Directory.directory(DirectoryName(rawValue: $1))) }
+            .reduce(Directory.root) { $0.joined(Directory.directory($1)) }
     }
 }
