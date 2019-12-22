@@ -1,6 +1,7 @@
 import Foundation
 
 extension FileManager {
+    @available(OSX 10.11, *)
     public func directories(in path: Path<Absolute, Directory>) -> AnySequence<Path<Absolute, Directory>> {
         let enumerator = self.enumerator(at: path.directoryURL, includingPropertiesForKeys: nil)
         

@@ -28,6 +28,7 @@ final class PathTests: XCTestCase {
         XCTAssertTrue(Directory.User.caches.render().hasSuffix("/Library/Caches/"))
     }
     
+    @available(OSX 10.11, *)
     func testFileEnumeration() throws {
         let data = "hello, world".data(using: .utf8)!
         
@@ -50,6 +51,7 @@ final class PathTests: XCTestCase {
         try FileManager.default.removeFile(f3)
     }
     
+    @available(OSX 10.11, *)
     func testDirectoryEnumeration() throws {
         let p1 = Directory.temporary <%> Directory.directory("nested") <%> Directory.directory("directory")
         
@@ -64,6 +66,7 @@ final class PathTests: XCTestCase {
         try FileManager.default.removeDirectory(p1)
     }
     
+    @available(OSX 10.11, *)
     static var allTests = [
         ("testRendering", testRendering),
         ("testDirectoryURL", testDirectoryURL),
