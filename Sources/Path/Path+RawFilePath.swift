@@ -1,5 +1,5 @@
 extension Path {
-    internal static func file(from rawFilePath: String) -> Path<Absolute, File> {
+    public static func file(from rawFilePath: String) -> Path<Absolute, File> {
         let pathComponents = rawFilePath.components(separatedBy: "/")
         
         guard let lastChunk = pathComponents.last else {

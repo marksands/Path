@@ -23,7 +23,7 @@ final class PathTests: XCTestCase {
     }
     
     func testFileUtil() {
-        XCTAssertTrue(Directory.temporary.render().hasSuffix("/tmp/"))
+        XCTAssertTrue(!Directory.temporary.render().isEmpty)
         XCTAssertTrue(Directory.User.applicationSupport.render().hasSuffix("/Application Support/"))
         XCTAssertTrue(Directory.User.caches.render().hasSuffix("/Library/Caches/"))
     }
